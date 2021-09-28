@@ -12,7 +12,7 @@ class GoogleTrackTraceMap extends StatefulWidget {
     required this.startPosition,
     required this.destinationPosition,
     this.currentPosition,
-    this.travelMode = TravelMode.Driving,
+    this.travelMode = TravelMode.driving,
   })  : assert(true),
         super(key: key);
 

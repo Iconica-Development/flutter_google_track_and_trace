@@ -3,6 +3,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_track_trace/google_track_trace.dart';
 
 class TrackTraceDemo extends StatefulWidget {
+  const TrackTraceDemo({Key? key}) : super(key: key);
+
   @override
   State<TrackTraceDemo> createState() => _TrackTraceDemoState();
 }
@@ -22,7 +24,7 @@ class _TrackTraceDemoState extends State<TrackTraceDemo> {
           markerId: MarkerId('Eind locatie'),
           position: LatLng(51.958996, 6.296520),
         ),
-        travelMode: TravelMode.Bicycling,
+        travelMode: TravelMode.bicycling,
         onMapCreated: (ctr) => {controller = ctr},
       ),
     );
@@ -30,6 +32,6 @@ class _TrackTraceDemoState extends State<TrackTraceDemo> {
 }
 
 void main() {
-  runApp(MaterialApp(home: TrackTraceDemo(
+  runApp(const MaterialApp(home: TrackTraceDemo(
   )));
 }

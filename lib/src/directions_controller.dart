@@ -1,6 +1,6 @@
 part of google_track_trace;
 
-enum TravelMode { Driving, Walking, Bicycling, Transit }
+enum TravelMode { driving, walking, bicycling, transit }
 
 class DirectionsRepository {
   static const String _baseUrl = '/maps/api/directions/json';
@@ -19,10 +19,10 @@ class DirectionsRepository {
         'key':
             key, // get this key from the controller
         'mode': <TravelMode, String>{
-          TravelMode.Driving: 'driving',
-          TravelMode.Bicycling: 'bicycling',
-          TravelMode.Transit: 'transit',
-          TravelMode.Walking: 'walking',
+          TravelMode.driving: 'driving',
+          TravelMode.bicycling: 'bicycling',
+          TravelMode.transit: 'transit',
+          TravelMode.walking: 'walking',
         }[mode],
       };
       final uri = Uri.https('maps.googleapis.com', _baseUrl, queryParameters);
