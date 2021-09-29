@@ -1,149 +1,181 @@
 part of google_track_trace;
 
-typedef void MapCreatedCallback(TrackTraceController controller);
+// typedef void MapCreatedCallback(TrackTraceController controller);
+enum TimePrecision { updateOnly, everySecond, everyMinute }
 
 class GoogleTrackTraceMap extends StatefulWidget {
   GoogleTrackTraceMap({
     Key? key,
-    this.initialCameraPosition = const CameraPosition(
-        target: LatLng(51.965578, 6.293439),
-        zoom: 15.0), // doetinchem default initialCamera
-    this.onMapCreated,
+    required this.onMapCreated,
     required this.startPosition,
     required this.destinationPosition,
-    this.currentPosition,
+    required this.googleAPIKey,
+    required this.routeUpdateInterval,
+    this.timerPrecision = TimePrecision.everyMinute,
     this.travelMode = TravelMode.driving,
+    this.routeLabel = '',
+    this.compassEnabled = false,
+    this.zoomControlsEnabled = false,
+    this.zoomGesturesEnabled = false,
+    this.mapToolbarEnabled = false,
+    this.mapType = MapType.normal,
+    this.buildingsEnabled = false,
   })  : assert(true),
         super(key: key);
-
-  CameraPosition initialCameraPosition;
 
   /// Callback method for when the map is ready to be used.
   ///
   /// Used to receive a [TrackTraceController] for this [GoogleTrackTraceMap].
   /// this [TrackTraceController] also contains the [GoogleMapController]
-  final MapCreatedCallback? onMapCreated;
+  final void Function(TrackTraceController) onMapCreated;
 
   final TravelMode travelMode;
-  Marker? startPosition;
-  Marker? destinationPosition;
-  Marker? currentPosition;
+
+  final String routeLabel;
+
+  final int routeUpdateInterval;
+
+  final TimePrecision timerPrecision;
+
+  final Marker startPosition;
+  final Marker destinationPosition;
+
+  final bool compassEnabled;
+  final bool zoomControlsEnabled;
+  final bool zoomGesturesEnabled;
+  final bool mapToolbarEnabled;
+  final bool buildingsEnabled;
+  final MapType mapType;
+
+  CameraPosition initialCameraPosition = const CameraPosition(
+      // doetinchem default initialCamera
+      target: LatLng(51.965578, 6.293439),
+      zoom: 12.0);
+
+  final String googleAPIKey;
 
   @override
   State createState() => _GoogleTrackTraceMapState();
 }
 
 class _GoogleTrackTraceMapState extends State<GoogleTrackTraceMap> {
-  final Completer<TrackTraceController> _controller =
-      Completer<TrackTraceController>();
-  late final GoogleMapController _mapController;
-  bool mapLoading = true;
+  late final TrackTraceController trackTraceController;
 
-  Directions? route; // this needs to be in the controller
+  Directions? route;
+  DateTime lastRouteUpdate = DateTime.now();
+
+  @override
+  void initState() {
+    super.initState();
+    trackTraceController =
+        TrackTraceController(widget.startPosition, widget.destinationPosition);
+    trackTraceController.addListener(_onChange);
+    widget.onMapCreated(trackTraceController);
+    startRouteUpdateTimer();
+    startMarkerUpdateTimer();
+  }
+
+  @override
+  void dispose() {
+    trackTraceController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GoogleMap(
+        initialCameraPosition: calculateCameraPosition(
+            trackTraceController.start.position,
+            trackTraceController.end.position),
+        onMapCreated: _onMapCreated,
+        compassEnabled: widget.compassEnabled,
+        zoomControlsEnabled: widget.zoomControlsEnabled,
+        zoomGesturesEnabled: widget.zoomGesturesEnabled,
+        mapToolbarEnabled: widget.mapToolbarEnabled,
+        mapType: widget.mapType,
+        buildingsEnabled: widget.buildingsEnabled,
+        markers: {
+          // style the markers
+          trackTraceController.start,
+          trackTraceController.end,
+          if (trackTraceController.current != null)
+            trackTraceController.current!,
+        },
+        polylines: {
+          if (route != null)
+            Polyline(
+              polylineId: PolylineId(widget.routeLabel),
+              color: Theme.of(context).primaryColor,
+              width: 4,
+              points: route!.polylinePoints
+                  .map((e) => LatLng(e.latitude, e.longitude))
+                  .toList(),
+            ),
+        });
+  }
+
+  void _onChange() {
+    setState(() {});
+  }
 
   void _onMapCreated(GoogleMapController controller) {
     if (mounted) {
-      _mapController = controller;
+      trackTraceController.mapController = controller;
       controller.setMapStyle(
-          '[{"featureType": "poi","stylers": [{"visibility": "off"}]}]');
+          '[{"featureType": "poi","stylers": [{"visibility": "off"}]}]'); // move to dart json file
     }
   }
 
   CameraPosition calculateCameraPosition(LatLng pointA, LatLng pointB) {
     LatLng target = LatLng((pointA.latitude + pointB.latitude) / 2,
         (pointA.longitude + pointB.longitude) / 2);
-    double calculatedZoom = 16.0;
+    double calculatedZoom = 13.0; // TODO calculate this zoom
+    
     return CameraPosition(
         target: target, zoom: calculatedZoom, tilt: 0.0, bearing: 0.0);
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return (!mapLoading)
-        ? GoogleMap(
-            initialCameraPosition: calculateCameraPosition(
-                widget.startPosition!.position,
-                widget.destinationPosition!.position),
-            onMapCreated: _onMapCreated,
-            compassEnabled: false,
-            zoomControlsEnabled: false,
-            mapToolbarEnabled: false,
-            mapType: MapType.normal,
-            buildingsEnabled: false,
-            markers: {
-                // style the markers
-                if (widget.startPosition != null) widget.startPosition!,
-                if (widget.destinationPosition != null)
-                  widget.destinationPosition!,
-                if (widget.currentPosition != null) widget.currentPosition!,
-              },
-            polylines: {
-                if (route != null)
-                  Polyline(
-                    polylineId: const PolylineId('Route van verzorger'),
-                    color: const Color(0xFFFF7884),
-                    width: 3,
-                    points: route!.polylinePoints
-                        .map((e) => LatLng(e.latitude, e.longitude))
-                        .toList(),
-                  ),
-              })
-        : Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: const [
-              CircularProgressIndicator(),
-              Text('Map is Loading'),
-            ],
-          );
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    updateMaps();
-  }
-
-  @override
-  void dispose() async {
-    super.dispose();
-    TrackTraceController controller = await _controller.future;
-    controller.dispose();
-  }
-
-  void updateMaps() async {
-    if (route == null) {
+  void startRouteUpdateTimer() {
+    calculateRoute(); // run at the start
+    Timer.periodic(Duration(seconds: widget.routeUpdateInterval), (timer) {
       calculateRoute();
+    });
+  }
+
+  void startMarkerUpdateTimer() {
+    if (widget.timerPrecision != TimePrecision.updateOnly) {
+      Timer.periodic(
+          Duration(
+              seconds: (widget.timerPrecision == TimePrecision.everyMinute)
+                  ? 60
+                  : 1), (timer) {
+        updateDurationTimer();
+      });
     }
-    // get the current GPS data from the user
-    // getLocationMarker().then((value) => {
-    //       setState(() {
-    //         _current = Marker(
-    //           markerId: MarkerId('Huidige locatie'),
-    //           position: LatLng(value.latitude, value.longitude),
-    //         );
-    //       })
-    //     });
+  }
+
+  void updateDurationTimer() {
+    if (route != null) {
+      trackTraceController.duration = route!.totalDuration -
+          DateTime.now().difference(lastRouteUpdate).inSeconds;
+    }
   }
 
   void calculateRoute() async {
-    print('calculating route');
-    if (widget.startPosition != null && widget.destinationPosition != null) {
-      DirectionsRepository()
-          .getDirections(
-            origin: widget.startPosition!.position,
-            destination: widget.destinationPosition!.position,
-            mode: widget.travelMode,
-            key: 'AIzaSyDaxZX8TeQeVf5tW-D6A66WLl20arbWV6c',
-          )
-          .then((value) => setState(() {
+    DirectionsRepository()
+        .getDirections(
+          origin: trackTraceController.start.position,
+          destination: trackTraceController.end.position,
+          mode: widget.travelMode,
+          key: widget.googleAPIKey,
+        )
+        .then((value) => {
+              trackTraceController.duration = value.totalDuration,
+              trackTraceController.mapController.moveCamera(CameraUpdate.newCameraPosition(calculateCameraPosition(trackTraceController.start.position, trackTraceController.end.position))),
+              setState(() {
+                lastRouteUpdate = DateTime.now();
                 route = value;
-                mapLoading = false;
-              }));
-      // setState(() {
-      //   route = directions;
-      //   mapLoading = true;
-      // });
-    }
+              })
+            });
   }
 }

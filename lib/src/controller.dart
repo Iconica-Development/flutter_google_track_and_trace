@@ -1,24 +1,48 @@
 part of google_track_trace;
 
-class TrackTraceController {
-  late final Completer<GoogleMapController> _mapController;
+class TrackTraceController extends ChangeNotifier {
+  late final GoogleMapController _mapController;
+  Marker startPosition;
+  Marker destinationPosition;
+  Marker? currentPosition;
 
-  // get the duration
+  int durationInSeconds = 0;
 
-  // get the distance
+  TrackTraceController(Marker start, Marker destination)
+      : startPosition = start,
+        destinationPosition = destination;
 
-  // listen to updates on the source marker
+  set start(Marker start) {
+    startPosition = start;
+    notifyListeners();
+  }
 
-  // listen to updates on the route
+  set current(Marker? current) {
+    currentPosition = current;
+    notifyListeners();
+  }
 
+  set end(Marker end) {
+    destinationPosition = end;
+    notifyListeners();
+  }
 
-  void dispose() {}
+  Marker get start => startPosition;
 
-  void setController(Completer<GoogleMapController> controller) {
+  Marker? get current => currentPosition;
+
+  Marker get end => destinationPosition;
+
+  set duration(int duration) {
+    durationInSeconds = duration;
+    notifyListeners();
+  }
+
+  int get duration => durationInSeconds;
+
+  set mapController(GoogleMapController controller) {
     _mapController = controller;
   }
 
-  Completer<GoogleMapController> getController() {
-    return _mapController;
-  }
+  GoogleMapController get mapController => _mapController;
 }

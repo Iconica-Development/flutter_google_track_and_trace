@@ -30,7 +30,6 @@ class DirectionsRepository {
         HttpHeaders.contentTypeHeader: 'application/json',
       });
       if (response.statusCode == 200) {
-        print(response.body);
         return Directions.fromMap(jsonDecode(response.body));
       }
     } on HttpException catch (e) {
@@ -43,8 +42,8 @@ class DirectionsRepository {
 class Directions {
   final LatLngBounds bounds;
   final List<PointLatLng> polylinePoints;
-  final String totalDistance;
-  final String totalDuration;
+  final int totalDistance;
+  final int totalDuration;
 
   const Directions({
     required this.bounds,
@@ -67,12 +66,12 @@ class Directions {
       northeast: LatLng(northeast['lat'], northeast['lng']),
     );
 
-    String distance = '';
-    String duration = '';
+    int distance = 0;
+    int duration = 0;
     if ((data['legs'] as List).isNotEmpty) {
       final leg = data['legs'][0];
-      distance = leg['distance']['text'];
-      duration = leg['duration']['text'];
+      distance = leg['distance']['value'];
+      duration = leg['duration']['value'];
     }
 
     return Directions(
