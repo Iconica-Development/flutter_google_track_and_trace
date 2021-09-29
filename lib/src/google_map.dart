@@ -167,14 +167,16 @@ class _GoogleTrackTraceMapState extends State<GoogleTrackTraceMap> {
           (widget.timerPrecision == TimePrecision.everyMinute) ? 60 : 1;
       Timer.periodic(Duration(seconds: updateInterval), (timer) {
         if (controller.route != null) {
-          controller.route!.duration =
-              controller.route!.duration - updateInterval;
+          controller.route = TrackTraceRoute(
+              controller.route!.duration - updateInterval,
+              controller.route!.distance,
+              controller.route!.line);
         }
       });
     }
   }
 
-  void calculateRoute() async { 
+  void calculateRoute() async {
     DirectionsRepository() //TODO refactor this away
         .getDirections(
           origin: controller.start.position,

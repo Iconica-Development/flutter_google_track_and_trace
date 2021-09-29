@@ -36,21 +36,39 @@ class TrackTraceController extends ChangeNotifier {
   }
 
   GoogleMapController? get mapController => _mapController;
+
+  @override
+  void dispose() {
+    _mapController?.dispose();
+    super.dispose();
+  }
 }
 
 class TrackTraceRoute {
   /// route duration in seconds
-  int duration = 0;
+  int _duration = 0;
 
   /// route distance in meters
-  int distance = 0;
+  int _distance = 0;
 
   /// route edge points
-  List<PointLatLng> line;
+  final List<PointLatLng> line;
 
   TrackTraceRoute(
       int durationValue, int distanceValue, List<PointLatLng> lineValue)
-      : duration = durationValue,
-        distance = distanceValue,
+      : _duration = durationValue,
+        _distance = distanceValue,
         line = lineValue;
+
+  int get distance => _distance;
+
+  int get duration => _duration;
+
+  set distance(int distance) {
+    _distance = distance;
+  }
+
+  set duration(int duration) {
+    _duration = duration;
+  }
 }

@@ -17,7 +17,7 @@ class _TrackTraceDemoState extends State<TrackTraceDemo> {
 
   @override
   void initState() {
-    Timer.periodic(const Duration(seconds: 10), (_) {
+    Timer.periodic(const Duration(seconds: 5), (_) {
       moveAlongRoute();
     });
     super.initState();
@@ -49,7 +49,7 @@ class _TrackTraceDemoState extends State<TrackTraceDemo> {
         line: const Polyline(
           polylineId: PolylineId('test route'),
           color: Colors.purple,
-          width: 7,
+          width: 5,
         ),
         onMapCreated: (ctr) => {
           controller = ctr,
