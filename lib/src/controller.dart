@@ -1,48 +1,56 @@
 part of google_track_trace;
 
 class TrackTraceController extends ChangeNotifier {
-  late final GoogleMapController _mapController;
-  Marker startPosition;
-  Marker destinationPosition;
-  Marker? currentPosition;
-
-  int durationInSeconds = 0;
+  GoogleMapController? _mapController;
+  Marker _startPosition;
+  Marker _destinationPosition;
+  TrackTraceRoute? _route;
 
   TrackTraceController(Marker start, Marker destination)
-      : startPosition = start,
-        destinationPosition = destination;
+      : _startPosition = start,
+        _destinationPosition = destination;
 
   set start(Marker start) {
-    startPosition = start;
-    notifyListeners();
-  }
-
-  set current(Marker? current) {
-    currentPosition = current;
+    _startPosition = start;
     notifyListeners();
   }
 
   set end(Marker end) {
-    destinationPosition = end;
+    _destinationPosition = end;
     notifyListeners();
   }
 
-  Marker get start => startPosition;
+  Marker get start => _startPosition;
 
-  Marker? get current => currentPosition;
+  Marker get end => _destinationPosition;
 
-  Marker get end => destinationPosition;
+  TrackTraceRoute? get route => _route;
 
-  set duration(int duration) {
-    durationInSeconds = duration;
+  set route(TrackTraceRoute? newRoute) {
+    _route = newRoute;
     notifyListeners();
   }
 
-  int get duration => durationInSeconds;
-
-  set mapController(GoogleMapController controller) {
+  set mapController(GoogleMapController? controller) {
     _mapController = controller;
   }
 
-  GoogleMapController get mapController => _mapController;
+  GoogleMapController? get mapController => _mapController;
+}
+
+class TrackTraceRoute {
+  /// route duration in seconds
+  int duration = 0;
+
+  /// route distance in meters
+  int distance = 0;
+
+  /// route edge points
+  List<PointLatLng> line;
+
+  TrackTraceRoute(
+      int durationValue, int distanceValue, List<PointLatLng> lineValue)
+      : duration = durationValue,
+        distance = distanceValue,
+        line = lineValue;
 }

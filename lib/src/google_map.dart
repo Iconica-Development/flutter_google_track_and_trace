@@ -13,13 +13,15 @@ class GoogleTrackTraceMap extends StatefulWidget {
     required this.routeUpdateInterval,
     this.timerPrecision = TimePrecision.everyMinute,
     this.travelMode = TravelMode.driving,
-    this.routeLabel = '',
     this.compassEnabled = false,
     this.zoomControlsEnabled = false,
     this.zoomGesturesEnabled = false,
     this.mapToolbarEnabled = false,
     this.mapType = MapType.normal,
     this.buildingsEnabled = false,
+    this.mapMarkations =
+        '[{"featureType": "poi","stylers": [{"visibility": "off"}]}]',
+    this.line,
   })  : assert(true),
         super(key: key);
 
@@ -31,8 +33,6 @@ class GoogleTrackTraceMap extends StatefulWidget {
 
   final TravelMode travelMode;
 
-  final String routeLabel;
-
   final int routeUpdateInterval;
 
   final TimePrecision timerPrecision;
@@ -40,12 +40,16 @@ class GoogleTrackTraceMap extends StatefulWidget {
   final Marker startPosition;
   final Marker destinationPosition;
 
+  Polyline? line;
+
   final bool compassEnabled;
   final bool zoomControlsEnabled;
   final bool zoomGesturesEnabled;
   final bool mapToolbarEnabled;
   final bool buildingsEnabled;
   final MapType mapType;
+
+  final String mapMarkations;
 
   CameraPosition initialCameraPosition = const CameraPosition(
       // doetinchem default initialCamera
@@ -59,25 +63,24 @@ class GoogleTrackTraceMap extends StatefulWidget {
 }
 
 class _GoogleTrackTraceMapState extends State<GoogleTrackTraceMap> {
-  late final TrackTraceController trackTraceController;
+  late final TrackTraceController controller;
 
-  Directions? route;
   DateTime lastRouteUpdate = DateTime.now();
 
   @override
   void initState() {
     super.initState();
-    trackTraceController =
+    controller =
         TrackTraceController(widget.startPosition, widget.destinationPosition);
-    trackTraceController.addListener(_onChange);
-    widget.onMapCreated(trackTraceController);
+    controller.addListener(_onChange);
+    widget.onMapCreated(controller);
     startRouteUpdateTimer();
     startMarkerUpdateTimer();
   }
 
   @override
   void dispose() {
-    trackTraceController.dispose();
+    controller.dispose();
     super.dispose();
   }
 
@@ -85,8 +88,7 @@ class _GoogleTrackTraceMapState extends State<GoogleTrackTraceMap> {
   Widget build(BuildContext context) {
     return GoogleMap(
         initialCameraPosition: calculateCameraPosition(
-            trackTraceController.start.position,
-            trackTraceController.end.position),
+            controller.start.position, controller.end.position),
         onMapCreated: _onMapCreated,
         compassEnabled: widget.compassEnabled,
         zoomControlsEnabled: widget.zoomControlsEnabled,
@@ -95,22 +97,25 @@ class _GoogleTrackTraceMapState extends State<GoogleTrackTraceMap> {
         mapType: widget.mapType,
         buildingsEnabled: widget.buildingsEnabled,
         markers: {
-          // style the markers
-          trackTraceController.start,
-          trackTraceController.end,
-          if (trackTraceController.current != null)
-            trackTraceController.current!,
+          controller.start,
+          controller.end,
         },
         polylines: {
-          if (route != null)
-            Polyline(
-              polylineId: PolylineId(widget.routeLabel),
-              color: Theme.of(context).primaryColor,
-              width: 4,
-              points: route!.polylinePoints
-                  .map((e) => LatLng(e.latitude, e.longitude))
-                  .toList(),
-            ),
+          if (controller.route != null)
+            (widget.line != null)
+                ? widget.line!.copyWith(
+                    pointsParam: controller.route!.line
+                        .map((e) => LatLng(e.latitude, e.longitude))
+                        .toList())
+                : Polyline(
+                    // default PolyLine if none is provided
+                    polylineId: const PolylineId('track&trace route'),
+                    color: Theme.of(context).primaryColor,
+                    width: 4,
+                    points: controller.route!.line
+                        .map((e) => LatLng(e.latitude, e.longitude))
+                        .toList(),
+                  ),
         });
   }
 
@@ -118,11 +123,10 @@ class _GoogleTrackTraceMapState extends State<GoogleTrackTraceMap> {
     setState(() {});
   }
 
-  void _onMapCreated(GoogleMapController controller) {
+  void _onMapCreated(GoogleMapController ctr) {
     if (mounted) {
-      trackTraceController.mapController = controller;
-      controller.setMapStyle(
-          '[{"featureType": "poi","stylers": [{"visibility": "off"}]}]'); // move to dart json file
+      controller.mapController = ctr;
+      ctr.setMapStyle(widget.mapMarkations); // move to dart json file
     }
   }
 
@@ -130,9 +134,24 @@ class _GoogleTrackTraceMapState extends State<GoogleTrackTraceMap> {
     LatLng target = LatLng((pointA.latitude + pointB.latitude) / 2,
         (pointA.longitude + pointB.longitude) / 2);
     double calculatedZoom = 13.0; // TODO calculate this zoom
-    
+
     return CameraPosition(
         target: target, zoom: calculatedZoom, tilt: 0.0, bearing: 0.0);
+  }
+
+  CameraUpdate moveCameraToCenter(LatLng pointA, LatLng pointB) {
+    return CameraUpdate.newLatLngBounds(
+        LatLngBounds(
+          southwest: LatLng(
+            min(pointA.latitude, pointB.latitude),
+            min(pointA.longitude, pointB.longitude),
+          ),
+          northeast: LatLng(
+            max(pointA.latitude, pointB.latitude),
+            max(pointA.longitude, pointB.longitude),
+          ),
+        ),
+        50);
   }
 
   void startRouteUpdateTimer() {
@@ -144,37 +163,35 @@ class _GoogleTrackTraceMapState extends State<GoogleTrackTraceMap> {
 
   void startMarkerUpdateTimer() {
     if (widget.timerPrecision != TimePrecision.updateOnly) {
-      Timer.periodic(
-          Duration(
-              seconds: (widget.timerPrecision == TimePrecision.everyMinute)
-                  ? 60
-                  : 1), (timer) {
-        updateDurationTimer();
+      int updateInterval =
+          (widget.timerPrecision == TimePrecision.everyMinute) ? 60 : 1;
+      Timer.periodic(Duration(seconds: updateInterval), (timer) {
+        if (controller.route != null) {
+          controller.route!.duration =
+              controller.route!.duration - updateInterval;
+        }
       });
     }
   }
 
-  void updateDurationTimer() {
-    if (route != null) {
-      trackTraceController.duration = route!.totalDuration -
-          DateTime.now().difference(lastRouteUpdate).inSeconds;
-    }
-  }
-
-  void calculateRoute() async {
-    DirectionsRepository()
+  void calculateRoute() async { 
+    DirectionsRepository() //TODO refactor this away
         .getDirections(
-          origin: trackTraceController.start.position,
-          destination: trackTraceController.end.position,
+          origin: controller.start.position,
+          destination: controller.end.position,
           mode: widget.travelMode,
           key: widget.googleAPIKey,
         )
         .then((value) => {
-              trackTraceController.duration = value.totalDuration,
-              trackTraceController.mapController.moveCamera(CameraUpdate.newCameraPosition(calculateCameraPosition(trackTraceController.start.position, trackTraceController.end.position))),
+              controller.route = TrackTraceRoute(value.totalDuration,
+                  value.totalDistance, value.polylinePoints),
+              if (controller.mapController != null)
+                {
+                  controller.mapController!.moveCamera(moveCameraToCenter(
+                      controller.start.position, controller.end.position)),
+                },
               setState(() {
                 lastRouteUpdate = DateTime.now();
-                route = value;
               })
             });
   }

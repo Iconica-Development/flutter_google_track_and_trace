@@ -35,7 +35,7 @@ class DirectionsRepository {
     } on HttpException catch (e) {
       print(e.message);
     }
-    throw GoogleMapsException('Unable to retrieve directions');
+    throw GoogleMapsException('Unable to retrieve directions from Google Maps API');
   }
 }
 
@@ -52,6 +52,7 @@ class Directions {
     required this.totalDuration,
   });
 
+  /// map the json response to a [Directions] object
   factory Directions.fromMap(Map<String, dynamic> map) {
     if ((map['routes'] as List).isEmpty) {
       throw GoogleMapsException('No Routes available');
@@ -92,7 +93,7 @@ class GoogleMapsException implements Exception {
 
   @override
   String toString() {
-    return 'Error occurred in Google Maps package:\n'
+    return 'Error occurred in Track&Trace package:\n'
         '$message';
   }
 }
