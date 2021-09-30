@@ -13,11 +13,10 @@ class DirectionsRepository {
     required String key,
   }) async {
     try {
-      final queryParameters = {
+      var queryParameters = {
         'origin': '${origin.latitude},${origin.longitude}',
         'destination': '${destination.latitude},${destination.longitude}',
-        'key':
-            key, // get this key from the controller
+        'key': key, // get this key from the controller
         'mode': <TravelMode, String>{
           TravelMode.driving: 'driving',
           TravelMode.bicycling: 'bicycling',
@@ -25,26 +24,25 @@ class DirectionsRepository {
           TravelMode.walking: 'walking',
         }[mode],
       };
-      final uri = Uri.https('maps.googleapis.com', _baseUrl, queryParameters);
-      final response = await http.get(uri, headers: {
-        HttpHeaders.contentTypeHeader: 'application/json',
-      });
+      var uri = Uri.https('maps.googleapis.com', _baseUrl, queryParameters);
+      var response = await http.get(
+        uri,
+        headers: {
+          HttpHeaders.contentTypeHeader: 'application/json',
+        },
+      );
       if (response.statusCode == 200) {
         return Directions.fromMap(jsonDecode(response.body));
       }
     } on HttpException catch (e) {
-      print(e.message);
+      debugPrint(e.message);
     }
-    throw GoogleMapsException('Unable to retrieve directions from Google Maps API');
+    throw GoogleMapsException(
+        'Unable to retrieve directions from Google Maps API',);
   }
 }
 
 class Directions {
-  final LatLngBounds bounds;
-  final List<PointLatLng> polylinePoints;
-  final int totalDistance;
-  final int totalDuration;
-
   const Directions({
     required this.bounds,
     required this.polylinePoints,
@@ -58,19 +56,19 @@ class Directions {
       throw GoogleMapsException('No Routes available');
     }
 
-    final data = Map<String, dynamic>.from(map['routes'][0]);
+    var data = Map<String, dynamic>.from((map['routes'] as List)[0]);
 
-    final northeast = data['bounds']['northeast'];
-    final southwest = data['bounds']['southwest'];
-    final bounds = LatLngBounds(
+    var northeast = data['bounds']['northeast'];
+    var southwest = data['bounds']['southwest'];
+    var bounds = LatLngBounds(
       southwest: LatLng(southwest['lat'], southwest['lng']),
       northeast: LatLng(northeast['lat'], northeast['lng']),
     );
 
-    int distance = 0;
-    int duration = 0;
+    var distance = 0;
+    var duration = 0;
     if ((data['legs'] as List).isNotEmpty) {
-      final leg = data['legs'][0];
+      var leg = (data['legs'] as List)[0];
       distance = leg['distance']['value'];
       duration = leg['duration']['value'];
     }
@@ -83,6 +81,11 @@ class Directions {
       totalDuration: duration,
     );
   }
+
+  final LatLngBounds bounds;
+  final List<PointLatLng> polylinePoints;
+  final int totalDistance;
+  final int totalDuration;
 }
 
 class GoogleMapsException implements Exception {

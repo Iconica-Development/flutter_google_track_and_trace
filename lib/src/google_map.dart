@@ -4,13 +4,13 @@ part of google_track_trace;
 enum TimePrecision { updateOnly, everySecond, everyMinute }
 
 class GoogleTrackTraceMap extends StatefulWidget {
-  GoogleTrackTraceMap({
-    Key? key,
+  const GoogleTrackTraceMap({
     required this.onMapCreated,
     required this.startPosition,
     required this.destinationPosition,
     required this.googleAPIKey,
     required this.routeUpdateInterval,
+    Key? key,
     this.timerPrecision = TimePrecision.everyMinute,
     this.travelMode = TravelMode.driving,
     this.compassEnabled = false,
@@ -22,8 +22,7 @@ class GoogleTrackTraceMap extends StatefulWidget {
     this.mapMarkations =
         '[{"featureType": "poi","stylers": [{"visibility": "off"}]}]',
     this.line,
-  })  : assert(true),
-        super(key: key);
+  })  : super(key: key);
 
   /// Callback method for when the map is ready to be used.
   ///
@@ -40,7 +39,7 @@ class GoogleTrackTraceMap extends StatefulWidget {
   final Marker startPosition;
   final Marker destinationPosition;
 
-  Polyline? line;
+  final Polyline? line;
 
   final bool compassEnabled;
   final bool zoomControlsEnabled;
@@ -50,11 +49,6 @@ class GoogleTrackTraceMap extends StatefulWidget {
   final MapType mapType;
 
   final String mapMarkations;
-
-  CameraPosition initialCameraPosition = const CameraPosition(
-      // doetinchem default initialCamera
-      target: LatLng(51.965578, 6.293439),
-      zoom: 12.0);
 
   final String googleAPIKey;
 
@@ -88,7 +82,7 @@ class _GoogleTrackTraceMapState extends State<GoogleTrackTraceMap> {
   Widget build(BuildContext context) {
     return GoogleMap(
         initialCameraPosition: calculateCameraPosition(
-            controller.start.position, controller.end.position),
+            controller.start.position, controller.end.position,),
         onMapCreated: _onMapCreated,
         compassEnabled: widget.compassEnabled,
         zoomControlsEnabled: widget.zoomControlsEnabled,
@@ -96,27 +90,27 @@ class _GoogleTrackTraceMapState extends State<GoogleTrackTraceMap> {
         mapToolbarEnabled: widget.mapToolbarEnabled,
         mapType: widget.mapType,
         buildingsEnabled: widget.buildingsEnabled,
-        markers: {
+        markers: <Marker>{
           controller.start,
           controller.end,
         },
-        polylines: {
+        polylines: <Polyline>{
           if (controller.route != null)
             (widget.line != null)
                 ? widget.line!.copyWith(
                     pointsParam: controller.route!.line
-                        .map((e) => LatLng(e.latitude, e.longitude))
-                        .toList())
+                        .map((PointLatLng e) => LatLng(e.latitude, e.longitude))
+                        .toList(),)
                 : Polyline(
                     // default PolyLine if none is provided
                     polylineId: const PolylineId('track&trace route'),
                     color: Theme.of(context).primaryColor,
                     width: 4,
                     points: controller.route!.line
-                        .map((e) => LatLng(e.latitude, e.longitude))
+                        .map((PointLatLng e) => LatLng(e.latitude, e.longitude))
                         .toList(),
                   ),
-        });
+        },);
   }
 
   void _onChange() {
@@ -131,12 +125,17 @@ class _GoogleTrackTraceMapState extends State<GoogleTrackTraceMap> {
   }
 
   CameraPosition calculateCameraPosition(LatLng pointA, LatLng pointB) {
-    LatLng target = LatLng((pointA.latitude + pointB.latitude) / 2,
-        (pointA.longitude + pointB.longitude) / 2);
-    double calculatedZoom = 13.0; // TODO calculate this zoom
+    var target = LatLng(
+      (pointA.latitude + pointB.latitude) / 2,
+      (pointA.longitude + pointB.longitude) / 2,
+    );
 
     return CameraPosition(
-        target: target, zoom: calculatedZoom, tilt: 0.0, bearing: 0.0);
+      target: target,
+      zoom: 13.0,
+      tilt: 0.0,
+      bearing: 0.0,
+    );
   }
 
   CameraUpdate moveCameraToCenter(LatLng pointA, LatLng pointB) {
@@ -151,33 +150,34 @@ class _GoogleTrackTraceMapState extends State<GoogleTrackTraceMap> {
             max(pointA.longitude, pointB.longitude),
           ),
         ),
-        50);
+        50,);
   }
 
   void startRouteUpdateTimer() {
     calculateRoute(); // run at the start
-    Timer.periodic(Duration(seconds: widget.routeUpdateInterval), (timer) {
+    Timer.periodic(Duration(seconds: widget.routeUpdateInterval), 
+    (Timer timer) {
       calculateRoute();
     });
   }
 
   void startMarkerUpdateTimer() {
     if (widget.timerPrecision != TimePrecision.updateOnly) {
-      int updateInterval =
+      var updateInterval =
           (widget.timerPrecision == TimePrecision.everyMinute) ? 60 : 1;
       Timer.periodic(Duration(seconds: updateInterval), (timer) {
         if (controller.route != null) {
           controller.route = TrackTraceRoute(
               controller.route!.duration - updateInterval,
               controller.route!.distance,
-              controller.route!.line);
+              controller.route!.line,);
         }
       });
     }
   }
 
-  void calculateRoute() async {
-    DirectionsRepository() //TODO refactor this away
+  void calculateRoute(){
+    DirectionsRepository() // TODO(freek): refactor this away
         .getDirections(
           origin: controller.start.position,
           destination: controller.end.position,
@@ -186,15 +186,15 @@ class _GoogleTrackTraceMapState extends State<GoogleTrackTraceMap> {
         )
         .then((value) => {
               controller.route = TrackTraceRoute(value.totalDuration,
-                  value.totalDistance, value.polylinePoints),
+                  value.totalDistance, value.polylinePoints,),
               if (controller.mapController != null)
                 {
                   controller.mapController!.moveCamera(moveCameraToCenter(
-                      controller.start.position, controller.end.position)),
+                      controller.start.position, controller.end.position,),),
                 },
               setState(() {
                 lastRouteUpdate = DateTime.now();
               })
-            });
+            },);
   }
 }

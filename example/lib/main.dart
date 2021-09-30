@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_track_trace/google_track_trace.dart';
 
 class TrackTraceDemo extends StatefulWidget {
@@ -27,22 +26,25 @@ class _TrackTraceDemoState extends State<TrackTraceDemo> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          title: (controller == null || controller!.route == null)
-              ? const Text('TrackTrace example')
-              : Text(controller!.route!.duration.toString() +
-                  ' seconds, afstand: ' +
-                  (controller!.route!.distance / 1000).toString() +
-                  ' km')),
+        title: (controller == null || controller!.route == null)
+            ? const Text('TrackTrace example')
+            : Text(
+                '${controller!.route!.duration} seconds, afstand: '
+                '${controller!.route!.distance / 1000} km',
+              ),
+      ),
       body: GoogleTrackTraceMap(
         startPosition: const Marker(
           markerId: MarkerId('Start locatie'),
           position: LatLng(52.356057, 4.897540),
         ),
         destinationPosition: const Marker(
-            markerId: MarkerId('Bestemming Locatie'),
-            position: LatLng(52.364709, 4.877157)),
+          markerId: MarkerId('Bestemming Locatie'),
+          position: LatLng(52.364709, 4.877157),
+        ),
         googleAPIKey: 'AIzaSyDaxZX8TeQeVf5tW-D6A66WLl20arbWV6c',
         travelMode: TravelMode.bicycling,
+        mapType: MapType.satellite,
         routeUpdateInterval: 60,
         timerPrecision: TimePrecision.everySecond,
         zoomGesturesEnabled: true,
@@ -66,15 +68,26 @@ class _TrackTraceDemoState extends State<TrackTraceDemo> {
     // 51.939909, 6.314950 SE
     if (controller != null) {
       controller!.start = Marker(
-          markerId: const MarkerId('Start Locatie'),
-          position: LatLng(51.93 + Random().nextDouble() * 0.06,
-              6.23 + Random().nextDouble() * 0.08));
+        markerId: const MarkerId('Start Locatie'),
+        position: LatLng(
+          51.93 + Random().nextDouble() * 0.06,
+          6.23 + Random().nextDouble() * 0.08,
+        ),
+      );
     }
   }
 
   void moveAlongRoute() {
-    if (controller != null && controller!.route != null && controller!.route!.line.length > 1) {
-      controller!.start = Marker(markerId: const MarkerId('Start Locatie'), position: LatLng(controller!.route!.line[1].latitude, controller!.route!.line[1].longitude));
+    if (controller != null &&
+        controller!.route != null &&
+        controller!.route!.line.length > 1) {
+      controller!.start = Marker(
+        markerId: const MarkerId('Start Locatie'),
+        position: LatLng(
+          controller!.route!.line[1].latitude,
+          controller!.route!.line[1].longitude,
+        ),
+      );
     }
   }
 }
