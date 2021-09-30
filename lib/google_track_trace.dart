@@ -17,3 +17,4 @@ export 'package:google_maps_flutter/google_maps_flutter.dart'
 part 'src/controller.dart';
 part 'src/directions_repository.dart';
 part 'src/google_map.dart';
+part 'src/google_map_theme.dart';

@@ -34,6 +34,22 @@ class _TrackTraceDemoState extends State<TrackTraceDemo> {
               ),
       ),
       body: GoogleTrackTraceMap(
+        mapStylingTheme: GoogleTrackTraceMapTheme(
+          themes: [
+            GoogleMapThemeFeature(
+              featureType: 'poi',
+              stylers: [
+                {'visibility': 'off'},
+              ],
+            ),
+            GoogleMapThemeFeature(
+              featureType: 'transit',
+              stylers: [
+                {'visibility': 'off'},
+              ],
+            ),
+          ],
+        ),
         startPosition: const Marker(
           markerId: MarkerId('Start locatie'),
           position: LatLng(52.356057, 4.897540),
@@ -43,15 +59,15 @@ class _TrackTraceDemoState extends State<TrackTraceDemo> {
           position: LatLng(52.364709, 4.877157),
         ),
         googleAPIKey: 'AIzaSyDaxZX8TeQeVf5tW-D6A66WLl20arbWV6c',
-        travelMode: TravelMode.bicycling,
-        mapType: MapType.satellite,
+        travelMode: TravelMode.walking,
+        mapType: MapType.normal,
         routeUpdateInterval: 60,
         timerPrecision: TimePrecision.everySecond,
         zoomGesturesEnabled: true,
         line: const Polyline(
           polylineId: PolylineId('test route'),
-          color: Colors.purple,
-          width: 5,
+          color: Color(0xFFFF7884),
+          width: 3,
         ),
         onMapCreated: (ctr) => {
           controller = ctr,
