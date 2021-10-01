@@ -13,10 +13,13 @@ class TrackTraceDemo extends StatefulWidget {
 
 class _TrackTraceDemoState extends State<TrackTraceDemo> {
   TrackTraceController? controller;
+  int step = 1;
+  int routeLength = 0;
+  late final Timer timer;
 
   @override
   void initState() {
-    Timer.periodic(const Duration(seconds: 5), (_) {
+    timer = Timer.periodic(const Duration(seconds: 2), (_) {
       moveAlongRoute();
     });
     super.initState();
@@ -48,6 +51,18 @@ class _TrackTraceDemoState extends State<TrackTraceDemo> {
                 {'visibility': 'off'},
               ],
             ),
+            // GoogleMapThemeFeature(
+            //   featureType: 'water',
+            //   stylers: [
+            //     {'color': '#00ff00'}
+            //   ],
+            // ),
+            // GoogleMapThemeFeature(
+            //   featureType: 'road',
+            //   stylers: [
+            //     {'color': '#000000'}
+            //   ],
+            // )
           ],
         ),
         startPosition: const Marker(
@@ -61,18 +76,37 @@ class _TrackTraceDemoState extends State<TrackTraceDemo> {
         googleAPIKey: 'AIzaSyDaxZX8TeQeVf5tW-D6A66WLl20arbWV6c',
         travelMode: TravelMode.walking,
         mapType: MapType.normal,
-        routeUpdateInterval: 60,
+        routeUpdateInterval: Duration(seconds: 30),
         timerPrecision: TimePrecision.everySecond,
         zoomGesturesEnabled: true,
+        scrollGesturesEnabled: true,
         line: const Polyline(
+          jointType: JointType.bevel,
           polylineId: PolylineId('test route'),
           color: Color(0xFFFF7884),
           width: 3,
         ),
+        onArrived: () {
+          timer.cancel();
+          debugPrint('stopping simulation');
+        },
+        onTap: (value) {
+          debugPrint(value.toString());
+        },
+        onLongPress: (value) {
+          debugPrint(value.toString());
+        },
+        onCameraMove: (value) {
+          debugPrint(value.toString());
+        },
         onMapCreated: (ctr) => {
           controller = ctr,
           ctr.addListener(() {
-            setState(() {});
+            setState(() {
+              if (ctr.route != null && ctr.route!.distance != routeLength) {
+                step = 1;
+              }
+            });
           }),
         },
       ),
@@ -100,10 +134,12 @@ class _TrackTraceDemoState extends State<TrackTraceDemo> {
       controller!.start = Marker(
         markerId: const MarkerId('Start Locatie'),
         position: LatLng(
-          controller!.route!.line[1].latitude,
-          controller!.route!.line[1].longitude,
+          controller!.route!.line[step].latitude,
+          controller!.route!.line[step].longitude,
         ),
       );
+      step++;
+      routeLength = controller!.route!.distance;
     }
   }
 }

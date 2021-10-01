@@ -12,7 +12,16 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 
 export 'package:google_maps_flutter/google_maps_flutter.dart'
-    show MapType, Marker, MarkerId, Polyline, PolylineId, LatLng;
+    show
+        MapType,
+        Marker,
+        MarkerId,
+        BitmapDescriptor,
+        InfoWindow,
+        Polyline,
+        PolylineId,
+        JointType,
+        LatLng;
 
 part 'src/controller.dart';
 part 'src/directions_repository.dart';

@@ -31,6 +31,36 @@ class TrackTraceController extends ChangeNotifier {
     notifyListeners();
   }
 
+  void recenterCamera() {
+    mapController?.moveCamera(
+      CameraUpdate.newLatLngBounds(
+        LatLngBounds(
+          southwest: LatLng(
+            min(
+              _startPosition.position.latitude,
+              _destinationPosition.position.latitude,
+            ),
+            min(
+              _startPosition.position.longitude,
+              _destinationPosition.position.longitude,
+            ),
+          ),
+          northeast: LatLng(
+            max(
+              _startPosition.position.latitude,
+              _destinationPosition.position.latitude,
+            ),
+            max(
+              _startPosition.position.longitude,
+              _destinationPosition.position.longitude,
+            ),
+          ),
+        ),
+        50,
+      ),
+    );
+  }
+
   @override
   void dispose() {
     mapController?.dispose();
@@ -39,11 +69,14 @@ class TrackTraceController extends ChangeNotifier {
 }
 
 class TrackTraceRoute {
-TrackTraceRoute(
-      int durationValue, int distanceValue, List<PointLatLng> lineValue,)
-      : duration = durationValue,
+  TrackTraceRoute(
+    int durationValue,
+    int distanceValue,
+    List<PointLatLng> lineValue,
+  )   : duration = durationValue,
         distance = distanceValue,
         line = lineValue;
+
   /// route duration in seconds
   int duration = 0;
 
@@ -51,5 +84,5 @@ TrackTraceRoute(
   int distance = 0;
 
   /// route edge points
-  final List<PointLatLng> line;
+  List<PointLatLng> line;
 }
