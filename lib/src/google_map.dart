@@ -163,7 +163,10 @@ class _GoogleTrackTraceMapState extends State<GoogleTrackTraceMap> {
     if (mounted) {
       controller.mapController = ctr;
       if (widget.mapStylingTheme != null) {
-        ctr.setMapStyle(widget.mapStylingTheme!.getJson());
+        ctr.setMapStyle(widget.mapStylingTheme!.getJson()).onError(
+              (error, stackTrace) =>
+                  throw GoogleMapsException(error.toString()),
+            );
       } else {
         // No theme provided so switching to default
         ctr.setMapStyle(

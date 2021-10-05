@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'dart:math';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:google_track_trace/google_track_trace.dart';
 
 class TrackTraceDemo extends StatefulWidget {
@@ -16,9 +18,12 @@ class _TrackTraceDemoState extends State<TrackTraceDemo> {
   int step = 1;
   int routeLength = 0;
   late final Timer timer;
+  BitmapDescriptor? startMarkerIcon;
+  BitmapDescriptor? destinationMarkerIcon;
 
   @override
   void initState() {
+    loadBitmapImages();
     timer = Timer.periodic(const Duration(seconds: 2), (_) {
       moveAlongRoute();
     });
@@ -40,9 +45,28 @@ class _TrackTraceDemoState extends State<TrackTraceDemo> {
         mapStylingTheme: GoogleTrackTraceMapTheme(
           themes: [
             GoogleMapThemeFeature(
+              featureType: 'all',
+              stylers: [
+                {'saturation': '-50'},
+                //{'invert_lightness': 'true'},
+              ],
+            ),
+            GoogleMapThemeFeature(
+              featureType: 'landscape.natural.landcover',
+              stylers: [
+                {'color': '#00ff00'},
+              ],
+            ),
+            GoogleMapThemeFeature(
               featureType: 'poi',
               stylers: [
                 {'visibility': 'off'},
+              ],
+            ),
+            GoogleMapThemeFeature(
+              featureType: 'poi.park',
+              stylers: [
+                {'visibility': 'on'},
               ],
             ),
             GoogleMapThemeFeature(
@@ -51,31 +75,25 @@ class _TrackTraceDemoState extends State<TrackTraceDemo> {
                 {'visibility': 'off'},
               ],
             ),
-            // GoogleMapThemeFeature(
-            //   featureType: 'water',
-            //   stylers: [
-            //     {'color': '#00ff00'}
-            //   ],
-            // ),
-            // GoogleMapThemeFeature(
-            //   featureType: 'road',
-            //   stylers: [
-            //     {'color': '#000000'}
-            //   ],
-            // )
           ],
         ),
-        startPosition: const Marker(
+        startPosition: Marker(
           markerId: MarkerId('Start locatie'),
+          anchor: Offset(0.5, 0.5),
           position: LatLng(52.356057, 4.897540),
+          icon: startMarkerIcon ?? BitmapDescriptor.defaultMarker,
         ),
-        destinationPosition: const Marker(
+        destinationPosition: Marker(
           markerId: MarkerId('Bestemming Locatie'),
+          anchor: Offset(0.5, 0.5),
           position: LatLng(52.364709, 4.877157),
+          icon: destinationMarkerIcon ?? BitmapDescriptor.defaultMarker,
         ),
+        buildingsEnabled: false,
         googleAPIKey: 'AIzaSyDaxZX8TeQeVf5tW-D6A66WLl20arbWV6c',
         travelMode: TravelMode.walking,
         mapType: MapType.normal,
+        indoorViewEnabled: false,
         routeUpdateInterval: Duration(seconds: 30),
         timerPrecision: TimePrecision.everySecond,
         zoomGesturesEnabled: true,
@@ -113,6 +131,35 @@ class _TrackTraceDemoState extends State<TrackTraceDemo> {
     );
   }
 
+  void loadBitmapImages() {
+    rootBundle.load('assets/profile_picture.png').then((value) {
+      convertBytesToCustomBitmapDescriptor(
+        value.buffer.asUint8List(),
+        size: 80,
+        addBorder: true,
+        borderColor: Colors.grey,
+        title: 'Alex',
+        titleBackgroundColor: Color(0xffff7884),
+      ).then((bitmap) {
+        startMarkerIcon = bitmap;
+        BitmapDescriptor.fromAssetImage(
+          ImageConfiguration(size: Size(100, 100)),
+          'assets/ic_location_on.png',
+        ).then((value) {
+          setState(() {
+            destinationMarkerIcon = value;
+            controller?.end = Marker(
+              anchor: Offset(0.5, 0.5),
+              markerId: MarkerId('Bestemming Locatie'),
+              position: LatLng(52.364709, 4.877157),
+              icon: value,
+            );
+          });
+        });
+      });
+    });
+  }
+
   void getRandomPointOnMap() {
     // 51.989909, 6.234950 NW
     // 51.939909, 6.314950 SE
@@ -133,10 +180,12 @@ class _TrackTraceDemoState extends State<TrackTraceDemo> {
         controller!.route!.line.length > 1) {
       controller!.start = Marker(
         markerId: const MarkerId('Start Locatie'),
+        anchor: Offset(0.5, 0.5),
         position: LatLng(
           controller!.route!.line[step].latitude,
           controller!.route!.line[step].longitude,
         ),
+        icon: startMarkerIcon ?? BitmapDescriptor.defaultMarker,
       );
       step++;
       routeLength = controller!.route!.distance;

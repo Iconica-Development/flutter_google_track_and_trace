@@ -52,3 +52,7 @@ class GoogleMapThemeFeature {
     };
   }
 }
+
+enum GoogleMapThemeFeatureType {
+  featureAll, 
+}
