@@ -106,6 +106,8 @@ class _GoogleTrackTraceMapState extends State<GoogleTrackTraceMap> {
   @override
   void dispose() {
     controller.dispose();
+    routeCalculateTimer.cancel();
+    markerUpdateTimer.cancel();
     super.dispose();
   }
 
