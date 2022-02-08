@@ -38,7 +38,8 @@ class DirectionsRepository {
       debugPrint(e.message);
     }
     throw GoogleMapsException(
-        'Unable to retrieve directions from Google Maps API',);
+      'Unable to retrieve directions from Google Maps API',
+    );
   }
 }
 

@@ -114,6 +114,9 @@ class _GoogleTrackTraceMapState extends State<GoogleTrackTraceMap> {
   @override
   Widget build(BuildContext context) {
     return GoogleMap(
+      gestureRecognizers: {
+        Factory<EagerGestureRecognizer>(() => EagerGestureRecognizer())
+      },
       initialCameraPosition: calculateCameraPosition(
         controller.start.position,
         controller.end.position,
