@@ -87,8 +87,8 @@ class _GoogleTrackTraceMapState extends State<GoogleTrackTraceMap> {
 
   DateTime lastRouteUpdate = DateTime.now();
 
-  late final Timer routeCalculateTimer;
-  late final Timer markerUpdateTimer;
+  Timer? routeCalculateTimer;
+  Timer? markerUpdateTimer;
 
   @override
   void initState() {
@@ -105,9 +105,9 @@ class _GoogleTrackTraceMapState extends State<GoogleTrackTraceMap> {
 
   @override
   void dispose() {
+    routeCalculateTimer?.cancel();
+    markerUpdateTimer?.cancel();
     controller.dispose();
-    routeCalculateTimer.cancel();
-    markerUpdateTimer.cancel();
     super.dispose();
   }
 
@@ -206,6 +206,10 @@ class _GoogleTrackTraceMapState extends State<GoogleTrackTraceMap> {
           (widget.timerPrecision == TimePrecision.everyMinute) ? 60 : 1;
       markerUpdateTimer =
           Timer.periodic(Duration(seconds: updateInterval), (timer) {
+        if (mounted) {
+          timer.cancel();
+          return;
+        }
         if (controller.route != null) {
           checkDestinationCloseBy();
           controller.route = TrackTraceRoute(
@@ -252,8 +256,8 @@ class _GoogleTrackTraceMapState extends State<GoogleTrackTraceMap> {
           controller.end.position,
         ) <
         widget.markerUpdatePrecision) {
-      routeCalculateTimer.cancel();
-      markerUpdateTimer.cancel();
+      routeCalculateTimer?.cancel();
+      markerUpdateTimer?.cancel();
       if (controller.route != null) {
         controller.route!.line = <PointLatLng>[controller.route!.line[1]];
         controller.route!.distance = 0;
