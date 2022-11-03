@@ -23,13 +23,13 @@ Future<BitmapDescriptor> convertBytesToCustomBitmapDescriptor(
     ..addRRect(
       RRect.fromRectAndRadius(
         Rect.fromLTWH(0, 0, size.toDouble(), size.toDouble()),
-        Radius.circular(100),
+        const Radius.circular(100),
       ),
     )
     ..addRRect(
       RRect.fromRectAndRadius(
         Rect.fromLTWH(0, size * 8 / 10, size.toDouble(), size * 3 / 10),
-        Radius.circular(100),
+        const Radius.circular(100),
       ),
     );
   canvas.clipPath(clipPath);
@@ -67,7 +67,7 @@ Future<BitmapDescriptor> convertBytesToCustomBitmapDescriptor(
     canvas.drawRRect(
       RRect.fromRectAndRadius(
         Rect.fromLTWH(0, size * 8 / 10, size.toDouble(), size * 3 / 10),
-        Radius.circular(100),
+        const Radius.circular(100),
       ),
       paint,
     );

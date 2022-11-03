@@ -6,7 +6,7 @@ class DirectionsRepository {
   static const String _baseUrl = '/maps/api/directions/json';
 
   /// get the route between the two coordinates
-  Future<Directions> getDirections({
+  Future<Directions?> getDirections({
     required LatLng origin,
     required LatLng destination,
     required TravelMode mode,
@@ -32,7 +32,11 @@ class DirectionsRepository {
         },
       );
       if (response.statusCode == 200) {
-        return Directions.fromMap(jsonDecode(response.body));
+        try {
+          return Directions.fromMap(jsonDecode(response.body));
+        } on GoogleMapsException catch (_) {
+          return null;
+        }
       }
     } on HttpException catch (e) {
       debugPrint(e.message);
