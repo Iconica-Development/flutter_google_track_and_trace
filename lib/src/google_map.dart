@@ -237,17 +237,20 @@ class _GoogleTrackTraceMapState extends State<GoogleTrackTraceMap> {
             key: widget.googleAPIKey,
           )
           .then(
-            (value) => {
-              controller.route = TrackTraceRoute(
-                value.totalDuration,
-                value.totalDistance,
-                value.polylinePoints,
-              ),
-              checkDestinationCloseBy(),
-              controller.recenterCamera(),
-              setState(() {
-                lastRouteUpdate = DateTime.now();
-              }),
+            (Directions? directions) => {
+              if (directions != null)
+                {
+                  controller.route = TrackTraceRoute(
+                    directions.totalDuration,
+                    directions.totalDistance,
+                    directions.polylinePoints,
+                  ),
+                  checkDestinationCloseBy(),
+                  controller.recenterCamera(),
+                  setState(() {
+                    lastRouteUpdate = DateTime.now();
+                  }),
+                }
             },
           );
     }
