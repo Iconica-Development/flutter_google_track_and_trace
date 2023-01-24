@@ -1,7 +1,7 @@
 part of google_track_trace;
 
 /// Styling object for the Google maps Style
-/// 
+///
 /// Contains a List of features with stylers applied to them
 /// Full documentation on all the possible style:
 /// https://developers.google.com/maps/documentation/javascript/style-reference
@@ -22,12 +22,13 @@ class GoogleTrackTraceMapTheme {
     required this.themes,
   });
   final List<GoogleMapThemeFeature> themes;
-  
+
   String getJson() {
     var sb = StringBuffer('[');
     for (var property in themes) {
-      sb..write(jsonEncode(property.toJson()))
-      ..write(',');
+      sb
+        ..write(jsonEncode(property.toJson()))
+        ..write(',');
     }
     sb.write(']');
     return sb.toString();
@@ -46,13 +47,13 @@ class GoogleMapThemeFeature {
 
   Map toJson() {
     return {
-      if(featureType != null) 'featureType': featureType,
-      if(elementType != null) 'elementType': elementType,
+      if (featureType != null) 'featureType': featureType,
+      if (elementType != null) 'elementType': elementType,
       'stylers': stylers,
     };
   }
 }
 
 enum GoogleMapThemeFeatureType {
-  featureAll, 
+  featureAll,
 }

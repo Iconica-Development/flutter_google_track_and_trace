@@ -124,36 +124,36 @@ Future<BitmapDescriptor> createBitmapDescriptorFromIconData(
 }
 
 /// Paints the icon background
-  // void _paintCircleFill(Canvas canvas, Color color) {
-  //   final paint = Paint()
-  //     ..style = PaintingStyle.fill
-  //     ..color = color;
-  //   canvas.drawCircle(Offset(_circleOffset, _circleOffset), 
-  //_fillCircleWidth, paint);
-  // }
+// void _paintCircleFill(Canvas canvas, Color color) {
+//   final paint = Paint()
+//     ..style = PaintingStyle.fill
+//     ..color = color;
+//   canvas.drawCircle(Offset(_circleOffset, _circleOffset),
+//_fillCircleWidth, paint);
+// }
 
-  // /// Paints a circle around the icon
-  // void _paintCircleStroke(Canvas canvas, Color color) {
-  //   final paint = Paint()
-  //     ..style = PaintingStyle.stroke
-  //     ..color = color
-  //     ..strokeWidth = _circleStrokeWidth;
-  //   canvas.drawCircle(Offset(_circleOffset, _circleOffset), 
-  //_outlineCircleWidth, paint);
-  // }
+// /// Paints a circle around the icon
+// void _paintCircleStroke(Canvas canvas, Color color) {
+//   final paint = Paint()
+//     ..style = PaintingStyle.stroke
+//     ..color = color
+//     ..strokeWidth = _circleStrokeWidth;
+//   canvas.drawCircle(Offset(_circleOffset, _circleOffset),
+//_outlineCircleWidth, paint);
+// }
 
-  // /// Paints the icon
-  // void _paintIcon(Canvas canvas, Color color, IconData iconData) {
-  //   final textPainter = TextPainter(textDirection: TextDirection.ltr);
-  //   textPainter.text = TextSpan(
-  //       text: String.fromCharCode(iconData.codePoint),
-  //       style: TextStyle(
-  //         letterSpacing: 0.0,
-  //         fontSize: _iconSize,
-  //         fontFamily: iconData.fontFamily,
-  //         color: color,
-  //       )
-  //   );
-  //   textPainter.layout();
-  //   textPainter.paint(canvas, Offset(_iconOffset, _iconOffset));
-  // }
+// /// Paints the icon
+// void _paintIcon(Canvas canvas, Color color, IconData iconData) {
+//   final textPainter = TextPainter(textDirection: TextDirection.ltr);
+//   textPainter.text = TextSpan(
+//       text: String.fromCharCode(iconData.codePoint),
+//       style: TextStyle(
+//         letterSpacing: 0.0,
+//         fontSize: _iconSize,
+//         fontFamily: iconData.fontFamily,
+//         color: color,
+//       )
+//   );
+//   textPainter.layout();
+//   textPainter.paint(canvas, Offset(_iconOffset, _iconOffset));
+// }
