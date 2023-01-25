@@ -130,32 +130,30 @@ class _TrackTraceDemoState extends State<TrackTraceDemo> {
     );
   }
 
-  void loadBitmapImages() {
-    rootBundle.load('assets/profile_picture.png').then((value) {
-      convertBytesToCustomBitmapDescriptor(
-        value.buffer.asUint8List(),
-        size: 80,
-        addBorder: true,
-        borderColor: Colors.grey,
-        title: 'Alex',
-        titleBackgroundColor: Color(0xffff7884),
-      ).then((bitmap) {
-        startMarkerIcon = bitmap;
-        BitmapDescriptor.fromAssetImage(
-          ImageConfiguration(size: Size(100, 100)),
-          'assets/ic_location_on.png',
-        ).then((value) {
-          setState(() {
-            destinationMarkerIcon = value;
-            controller?.end = Marker(
-              anchor: Offset(0.5, 0.5),
-              markerId: MarkerId('Bestemming Locatie'),
-              position: LatLng(52.364709, 4.877157),
-              icon: value,
-            );
-          });
-        });
-      });
+  Future<void> loadBitmapImages() async {
+    var loadedPicture = await rootBundle.load('assets/profile_picture.png');
+    var bitmap = await convertBytesToCustomBitmapDescriptor(
+      loadedPicture.buffer.asUint8List(),
+      size: 80,
+      addBorder: true,
+      borderColor: Colors.grey,
+      title: 'Alex',
+      titleBackgroundColor: Color(0xffff7884),
+    );
+
+    startMarkerIcon = bitmap;
+    var bitmapDescriptor = await BitmapDescriptor.fromAssetImage(
+      ImageConfiguration(size: Size(100, 100)),
+      'assets/ic_location_on.png',
+    );
+    setState(() {
+      destinationMarkerIcon = bitmapDescriptor;
+      controller?.end = Marker(
+        anchor: Offset(0.5, 0.5),
+        markerId: MarkerId('Bestemming Locatie'),
+        position: LatLng(52.364709, 4.877157),
+        icon: bitmapDescriptor,
+      );
     });
   }
 

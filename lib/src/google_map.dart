@@ -227,32 +227,28 @@ class _GoogleTrackTraceMapState extends State<GoogleTrackTraceMap> {
     }
   }
 
-  void calculateRoute() {
+  Future<void> calculateRoute() async {
     if (controller.route == null || checkTargetMoved()) {
-      DirectionsRepository() // TODO(freek): refactor this away
-          .getDirections(
-            origin: controller.start.position,
-            destination: controller.end.position,
-            mode: widget.travelMode,
-            key: widget.googleAPIKey,
-          )
-          .then(
-            (Directions? directions) => {
-              if (directions != null)
-                {
-                  controller.route = TrackTraceRoute(
-                    directions.totalDuration,
-                    directions.totalDistance,
-                    directions.polylinePoints,
-                  ),
-                  checkDestinationCloseBy(),
-                  controller.recenterCamera(),
-                  setState(() {
-                    lastRouteUpdate = DateTime.now();
-                  }),
-                }
-            },
-          );
+      var directions =
+          await DirectionsRepository() // TODO(freek): refactor this away
+              .getDirections(
+        origin: controller.start.position,
+        destination: controller.end.position,
+        mode: widget.travelMode,
+        key: widget.googleAPIKey,
+      );
+      if (directions != null) {
+        controller.route = TrackTraceRoute(
+          directions.totalDuration,
+          directions.totalDistance,
+          directions.polylinePoints,
+        );
+        checkDestinationCloseBy();
+        controller.recenterCamera();
+        setState(() {
+          lastRouteUpdate = DateTime.now();
+        });
+      }
     }
   }
 
