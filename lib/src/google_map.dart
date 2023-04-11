@@ -172,7 +172,6 @@ class _GoogleTrackTraceMapState extends State<GoogleTrackTraceMap> {
       if (widget.mapStylingTheme != null) {
         ctr.setMapStyle(widget.mapStylingTheme!.getJson()).onError(
           (error, stackTrace) async {
-            print(error);
             throw GoogleMapsException(error.toString());
           },
         );

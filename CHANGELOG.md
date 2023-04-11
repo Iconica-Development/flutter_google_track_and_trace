@@ -1,3 +1,7 @@
-## 0.0.1
+1.1.0
+ * Feature: Optional parameter `retrieveDirections` to disable directions api calls
+ * Fix: Issue with json conversion google map theme.
 
-* TODO: Describe initial release.
+1.0.2
+ 
+ * Minor fixes
