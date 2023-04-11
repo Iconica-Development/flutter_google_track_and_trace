@@ -24,14 +24,7 @@ class GoogleTrackTraceMapTheme {
   final List<GoogleMapThemeFeature> themes;
 
   String getJson() {
-    var sb = StringBuffer('[');
-    for (var property in themes) {
-      sb
-        ..write(jsonEncode(property.toJson()))
-        ..write(',');
-    }
-    sb.write(']');
-    return sb.toString();
+    return jsonEncode(themes.map((e) => e.toJson()).toList());
   }
 }
 
