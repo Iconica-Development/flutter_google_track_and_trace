@@ -28,6 +28,7 @@ class GoogleTrackTraceMap extends StatefulWidget {
     this.buildingsEnabled = false,
     this.indoorViewEnabled = false,
     this.trafficEnabled = false,
+    this.retrieveDirections = true,
     this.mapStylingTheme,
     this.onTap,
     this.onArrived,
@@ -62,6 +63,7 @@ class GoogleTrackTraceMap extends StatefulWidget {
   final bool tiltGesturesEnabled;
   final bool myLocationEnabled;
   final bool myLocationButtonEnabled;
+  final bool retrieveDirections;
   final bool zoomControlsEnabled;
   final bool zoomGesturesEnabled;
   final bool mapToolbarEnabled;
@@ -169,9 +171,11 @@ class _GoogleTrackTraceMapState extends State<GoogleTrackTraceMap> {
       controller.mapController = ctr;
       if (widget.mapStylingTheme != null) {
         ctr.setMapStyle(widget.mapStylingTheme!.getJson()).onError(
-              (error, stackTrace) =>
-                  throw GoogleMapsException(error.toString()),
-            );
+          (error, stackTrace) async {
+            print(error);
+            throw GoogleMapsException(error.toString());
+          },
+        );
       } else {
         // No theme provided so switching to default
         ctr.setMapStyle(
@@ -228,6 +232,9 @@ class _GoogleTrackTraceMapState extends State<GoogleTrackTraceMap> {
   }
 
   Future<void> calculateRoute() async {
+    if (!widget.retrieveDirections) {
+      return;
+    }
     if (controller.route == null || checkTargetMoved()) {
       var directions =
           await DirectionsRepository() // TODO(freek): refactor this away
