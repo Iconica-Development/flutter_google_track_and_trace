@@ -9,15 +9,21 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_polyline_points: ^1.0.0
+  flutter_polyline_points:
+  # The flutter_polyline_points depends   
+    git:
+      url: https://github.com/nnadir35/flutter_polyline_points
+      ref: 3388c9d5444b9ea81d69d15af85012702322dc56
   google_maps_flutter: ^2.0.10
   google_maps_flutter_web: ^0.3.1
-  http: ^0.13.3
+  http: ^1.1.0
+
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^1.0.0
+  
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
