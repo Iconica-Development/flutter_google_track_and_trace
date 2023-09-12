@@ -1,4 +1,4 @@
-library google_track_trace;
+library flutter_google_track_and_trace;
 
 import 'dart:async';
 import 'dart:convert';

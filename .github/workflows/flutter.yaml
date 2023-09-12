@@ -1,27 +1,14 @@
-name: CI
+name: Iconica Standard Component CI Workflow
+# Workflow Caller version: 2.0.0
 
 on:
-  push:
-    branches: [master, develop]
   pull_request:
+  workflow_dispatch:
 
 jobs:
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/cache@v3
-        with:
-          path: |
-            ~/.gradle/wrapper
-            /opt/hostedtoolcache/flutter
-          key: ${{ runner.OS }}-flutter-install-cache
-      - uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable'
-      - name: Project preparation
-        run: flutter pub get
-      - name: Dart format
-        run: dart format -o none --set-exit-if-changed .
-      - name: Flutter analyze
-        run: flutter analyze
+  call-global-iconica-workflow:
+    uses: Iconica-Development/.github/.github/workflows/component-ci.yml@master
+    secrets: inherit
+    permissions: write-all
+    with:
+      subfolder: '.' # add optional subfolder to run workflow in
