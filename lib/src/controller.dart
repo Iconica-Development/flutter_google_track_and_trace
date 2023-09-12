@@ -1,4 +1,4 @@
-part of google_track_trace;
+part of flutter_google_track_and_trace;
 
 class TrackTraceController extends ChangeNotifier {
   TrackTraceController(Marker start, Marker destination)
