@@ -77,15 +77,15 @@ class _TrackTraceDemoState extends State<TrackTraceDemo> {
           ],
         ),
         startPosition: Marker(
-          markerId: MarkerId('Start locatie'),
-          anchor: Offset(0.5, 0.5),
-          position: LatLng(52.356057, 4.897540),
+          markerId: const MarkerId('Start locatie'),
+          anchor: const Offset(0.5, 0.5),
+          position: const LatLng(52.356057, 4.897540),
           icon: startMarkerIcon ?? BitmapDescriptor.defaultMarker,
         ),
         destinationPosition: Marker(
-          markerId: MarkerId('Bestemming Locatie'),
-          anchor: Offset(0.5, 0.5),
-          position: LatLng(52.364709, 4.877157),
+          markerId: const MarkerId('Bestemming Locatie'),
+          anchor: const Offset(0.5, 0.5),
+          position: const LatLng(52.364709, 4.877157),
           icon: destinationMarkerIcon ?? BitmapDescriptor.defaultMarker,
         ),
         buildingsEnabled: false,
@@ -93,7 +93,7 @@ class _TrackTraceDemoState extends State<TrackTraceDemo> {
         travelMode: TravelMode.walking,
         mapType: MapType.normal,
         indoorViewEnabled: false,
-        routeUpdateInterval: Duration(seconds: 30),
+        routeUpdateInterval: const Duration(seconds: 30),
         timerPrecision: TimePrecision.everySecond,
         zoomGesturesEnabled: true,
         scrollGesturesEnabled: true,
@@ -138,20 +138,20 @@ class _TrackTraceDemoState extends State<TrackTraceDemo> {
       addBorder: true,
       borderColor: Colors.grey,
       title: 'Alex',
-      titleBackgroundColor: Color(0xffff7884),
+      titleBackgroundColor: const Color(0xffff7884),
     );
 
     startMarkerIcon = bitmap;
     var bitmapDescriptor = await BitmapDescriptor.fromAssetImage(
-      ImageConfiguration(size: Size(100, 100)),
+      const ImageConfiguration(size: Size(100, 100)),
       'assets/ic_location_on.png',
     );
     setState(() {
       destinationMarkerIcon = bitmapDescriptor;
       controller?.end = Marker(
-        anchor: Offset(0.5, 0.5),
-        markerId: MarkerId('Bestemming Locatie'),
-        position: LatLng(52.364709, 4.877157),
+        anchor: const Offset(0.5, 0.5),
+        markerId: const MarkerId('Bestemming Locatie'),
+        position: const LatLng(52.364709, 4.877157),
         icon: bitmapDescriptor,
       );
     });
@@ -177,7 +177,7 @@ class _TrackTraceDemoState extends State<TrackTraceDemo> {
         controller!.route!.line.length > 1) {
       controller!.start = Marker(
         markerId: const MarkerId('Start Locatie'),
-        anchor: Offset(0.5, 0.5),
+        anchor: const Offset(0.5, 0.5),
         position: LatLng(
           controller!.route!.line[step].latitude,
           controller!.route!.line[step].longitude,
