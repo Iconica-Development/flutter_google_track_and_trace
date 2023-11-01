@@ -106,6 +106,19 @@ import GoogleMaps
   }
 }
 ```
+
+### WEB
+Add the following code in the 'head' of 'web/index.html':
+
+```html
+<head>
+
+  <!-- // Other stuff -->
+
+  <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY"></script>
+</head>
+```
+
 ## Usage
 
 
