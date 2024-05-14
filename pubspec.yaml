@@ -1,6 +1,6 @@
 name: flutter_google_track_and_trace
 description: An Iconica Flutter plugin for Track & Trace Package
-version: 2.0.1
+version: 2.1.0
 
 environment:
   sdk: ">=3.3.0 <4.0.0"
