@@ -123,6 +123,9 @@ class _GoogleTrackTraceMapState extends State<GoogleTrackTraceMap> {
         controller.start.position,
         controller.end.position,
       ),
+      style: widget.mapStylingTheme != null
+          ? widget.mapStylingTheme!.getJson()
+          : '[{"featureType": "poi","stylers": [{"visibility": "off"}]}]',
       onMapCreated: _onMapCreated,
       onTap: widget.onTap,
       onLongPress: widget.onLongPress,
@@ -169,18 +172,6 @@ class _GoogleTrackTraceMapState extends State<GoogleTrackTraceMap> {
   void _onMapCreated(GoogleMapController ctr) {
     if (mounted) {
       controller.mapController = ctr;
-      if (widget.mapStylingTheme != null) {
-        ctr.setMapStyle(widget.mapStylingTheme!.getJson()).onError(
-          (error, stackTrace) async {
-            throw GoogleMapsException(error.toString());
-          },
-        );
-      } else {
-        // No theme provided so switching to default
-        ctr.setMapStyle(
-          '[{"featureType": "poi","stylers": [{"visibility": "off"}]}]',
-        );
-      }
       controller.recenterCamera();
     }
   }
