@@ -3,7 +3,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
-import 'package:flutter_google_track_and_trace/google_track_trace.dart';
+import 'package:flutter_google_track_and_trace/flutter_google_track_and_trace.dart';
 
 class TrackTraceDemo extends StatefulWidget {
   const TrackTraceDemo({Key? key}) : super(key: key);
