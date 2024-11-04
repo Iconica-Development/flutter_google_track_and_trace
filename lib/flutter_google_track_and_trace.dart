@@ -23,6 +23,7 @@ export 'package:google_maps_flutter/google_maps_flutter.dart'
         Polyline,
         PolylineId,
         JointType,
+        MapBitmapScaling,
         LatLng;
 part 'src/controller.dart';
 part 'src/directions_repository.dart';

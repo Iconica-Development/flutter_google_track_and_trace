@@ -98,7 +98,9 @@ Future<BitmapDescriptor> convertBytesToCustomBitmapDescriptor(
   var data = await _image.toByteData(format: ui.ImageByteFormat.png);
 
   //convert PNG bytes as BitmapDescriptor
-  return BitmapDescriptor.bytes(data!.buffer.asUint8List());
+  // TODO(freek): change this to use .bytes but this impacts the autoscaling
+  // ignore: deprecated_member_use
+  return BitmapDescriptor.fromBytes(data!.buffer.asUint8List());
 }
 
 /// https://medium.com/@JBXBergDev/how-to-use-googlemap-markers-with-flutter-material-icons-38c4c975e928
@@ -119,8 +121,9 @@ Future<BitmapDescriptor> createBitmapDescriptorFromIconData(
   var picture = pictureRecorder.endRecording();
   var image = await picture.toImage(markerSize.round(), markerSize.round());
   var bytes = await image.toByteData(format: ui.ImageByteFormat.png);
-
-  return BitmapDescriptor.bytes(bytes!.buffer.asUint8List());
+  // TODO(freek): change this to use .bytes but this impacts the autoscaling
+  // ignore: deprecated_member_use
+  return BitmapDescriptor.fromBytes(bytes!.buffer.asUint8List());
 }
 
 /// Paints the icon background
