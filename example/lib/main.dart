@@ -142,6 +142,7 @@ class _TrackTraceDemoState extends State<TrackTraceDemo> {
     );
 
     startMarkerIcon = bitmap;
+    // ignore: deprecated_member_use
     var bitmapDescriptor = await BitmapDescriptor.fromAssetImage(
       const ImageConfiguration(size: Size(100, 100)),
       'assets/ic_location_on.png',
