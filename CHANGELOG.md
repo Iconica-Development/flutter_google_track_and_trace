@@ -1,3 +1,6 @@
+2.1.2:
+* Fix: make the mapstyling Map<String, dynamic> instead of Map<String, String> to support other values than strings that are not automatically converted anymore by google maps on web.
+
 2.1.1:
 * Fix: add back deprecated 'fromBytes' method to support autoscaling of images again. In the future this should be done with the bytes method for BitmapDescriptor.
 
