@@ -1,6 +1,6 @@
 name: flutter_google_track_and_trace
 description: An Iconica Flutter plugin for Track & Trace Package
-version: 2.1.1
+version: 2.1.2
 repository: https://github.com/Iconica-Development/flutter_google_track_and_trace
 
 publish_to: https://forgejo.internal.iconica.nl/api/packages/internal/pub

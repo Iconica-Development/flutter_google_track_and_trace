@@ -36,7 +36,7 @@ class GoogleMapThemeFeature {
   });
   final String? featureType;
   final String? elementType;
-  final List<Map<String, String>> stylers;
+  final List<Map<String, dynamic>> stylers;
 
   Map toJson() {
     return {
