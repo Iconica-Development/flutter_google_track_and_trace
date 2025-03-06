@@ -1,3 +1,7 @@
+2.1.3:
+* Chore: Upgrade flutter_polyline_points from 1.0.0 to 2.1.0
+* Chore: Upgrade http from 0.13.3 to 1.1.0
+
 2.1.2:
 * Fix: make the mapstyling Map<String, dynamic> instead of Map<String, String> to support other values than strings that are not automatically converted anymore by google maps on web.
 
@@ -5,15 +9,14 @@
 * Fix: add back deprecated 'fromBytes' method to support autoscaling of images again. In the future this should be done with the bytes method for BitmapDescriptor.
 
 2.1.0:
- * Chore: Upgrade google_maps_flutter dependency to 2.6.1
+* Chore: Upgrade google_maps_flutter dependency to 2.6.1
 
 2.0.1
- * Fix: Updated the README.md to show how to properly set up the index.html for use in web
+* Fix: Updated the README.md to show how to properly set up the index.html for use in web
 
 1.1.0
- * Feature: Optional parameter `retrieveDirections` to disable directions api calls
- * Fix: Issue with json conversion google map theme.
+* Feature: Optional parameter `retrieveDirections` to disable directions api calls
+* Fix: Issue with json conversion google map theme.
 
 1.0.2
- 
- * Minor fixes
+* Minor fixes
